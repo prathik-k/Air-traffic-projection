@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Predictions.AR import create_matrices_used_to_compute_parameters, compute_parameters, create_matrix_for_prediction, predict_next_statistics
+from Predictions.AR import full_prediction_AR
 
 
 def select_rows(df):
@@ -37,7 +37,7 @@ if __name__ == "__main__":
             ['Unnamed: 14'], axis=1)
         data_by_year[str(y)] = select_rows(df)
 
-    # Get the number of people that travelled by flight between NY and Boston for the different years
+    # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
     origin = 'JFK'
     dest = 'BOS'
 
@@ -45,17 +45,14 @@ if __name__ == "__main__":
     for y_idx in range(len(years)):
         past_statistics[y_idx] = count_people_air_travelling(data_by_year, origin, dest, years[y_idx])
 
-    # Auto-regressive model to predict the number of people that will travel by flight between NY and Boston for the years to come
+    print('Number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[0], years[-1], past_statistics))
+
+    # Auto-regressive model to predict the number of people that will travel by flight between NY and Boston for each year between year 2020 and year 2025
     order_AR = 3
-
-    A, b = create_matrices_used_to_compute_parameters(past_statistics, order_AR)
-    parameters = compute_parameters(A, b)
-
     number_of_years_to_predict = 5
-    A_prediction = create_matrix_for_prediction(past_statistics, order_AR, number_of_years_to_predict)
 
-    next_statistics = predict_next_statistics(A_prediction, parameters, order_AR)
+    next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
 
-    print(next_statistics)
+    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[0] + 1, years[-1] + number_of_years_to_predict, next_statistics))
 
 

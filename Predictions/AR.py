@@ -37,3 +37,13 @@ def predict_next_statistics(A, parameters, order_AR):
             b_predicted.append(np.dot(A[k + 1], parameters))
     b_predicted = np.array(b_predicted).astype(int)
     return b_predicted
+
+
+def full_prediction_AR(past_statistics, order_AR, number_of_next_statistics):
+    A, b = create_matrices_used_to_compute_parameters(past_statistics, order_AR)
+    parameters = compute_parameters(A, b)
+
+    A_prediction = create_matrix_for_prediction(past_statistics, order_AR, number_of_next_statistics)
+
+    next_statistics = predict_next_statistics(A_prediction, parameters, order_AR)
+    return next_statistics
