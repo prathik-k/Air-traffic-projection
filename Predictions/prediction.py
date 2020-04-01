@@ -53,6 +53,6 @@ if __name__ == "__main__":
 
     next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
 
-    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[0] + 1, years[-1] + number_of_years_to_predict, next_statistics))
+    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[-1] + 1, years[-1] + number_of_years_to_predict, next_statistics))
 
 
