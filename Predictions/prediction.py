@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Predictions.AR import full_prediction_AR
+from AR import full_prediction_AR
 
 
 def select_rows(df):
