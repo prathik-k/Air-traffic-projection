@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from AR import full_prediction_AR
+import argparse
 
 
 def select_rows(df):
@@ -28,6 +29,7 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Predicts number of people travelling by flight between an origin and a destination. The prediction model used is an auto-regressive model.")
 
     # Clean data
     years = [2015, 2016, 2017, 2018, 2019]
@@ -37,22 +39,23 @@ if __name__ == "__main__":
             ['Unnamed: 14'], axis=1)
         data_by_year[str(y)] = select_rows(df)
 
-    # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
-    origin = 'JFK'
-    dest = 'BOS'
+    parser.add_argument("origin", type=str, help="The three letter code of the origin airport. Ex: 'JFK'.")
+    parser.add_argument("dest", type=str, help="The three letter code of the destination airport. Ex: 'BOS'.")
+    parser.add_argument("order_AR", type=int, help="The order of the auto-regressive model. Ex: 3.")
+    parser.add_argument("number_of_years_to_predict", type=int, help="The number of future years to predict. Ex: 5.")
 
+    args = parser.parse_args()
+
+    # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
     past_statistics = np.zeros((len(years)), int)
     for y_idx in range(len(years)):
-        past_statistics[y_idx] = count_people_air_travelling(data_by_year, origin, dest, years[y_idx])
+        past_statistics[y_idx] = count_people_air_travelling(data_by_year, args.origin, args.dest, years[y_idx])
 
-    print('Number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[0], years[-1], past_statistics))
+    print('Number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, years[0], years[-1], past_statistics))
 
     # Auto-regressive model to predict the number of people that will travel by flight between NY and Boston for each year between year 2020 and year 2025
-    order_AR = 3
-    number_of_years_to_predict = 5
+    next_statistics = full_prediction_AR(past_statistics, args.order_AR, args.number_of_years_to_predict)
 
-    next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
-
-    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(origin, dest, years[-1] + 1, years[-1] + number_of_years_to_predict, next_statistics))
+    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, years[-1] + 1, years[-1] + args.number_of_years_to_predict, next_statistics))
 
 
