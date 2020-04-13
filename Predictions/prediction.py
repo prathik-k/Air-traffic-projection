@@ -28,6 +28,15 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
     return number_of_people
 
 def generate_statistics_for_request(origin, dest, data_by_year, number_of_years_to_predict = 3, order_AR = 4):
+    """
+    This function returns a list containing statistics.
+    :param origin: string representing the three letter code in capital letter of the origin airport.
+    :param dest: string representing the three letter code in capital letter of the destination airport.
+    :param data_by_year: dictionary produced by select_row containing air data.
+    :param number_of_years_to_predict: integer representing the number of future years for which we wich to predict statistics.
+    :param order_AR: integer representing the order of the AR model.
+    :return statistics: list of dictionaries containing the statistics.
+    """
     statistics = []
     past_years = list(data_by_year.keys())
     past_statistics = np.zeros((len(past_years)), int)
@@ -36,14 +45,14 @@ def generate_statistics_for_request(origin, dest, data_by_year, number_of_years_
         past_statistics[y_idx] = number_of_people_air_travelling
         statistics.append({
             "year": int(past_years[y_idx]),
-            "number_of_people": number_of_people_air_travelling,
+            "number_of_people": int(number_of_people_air_travelling),
             "carbon_emission": 0,
             "prediction": False})
     next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
     for y_idx in range(number_of_years_to_predict):
         statistics.append({
             "year": int(past_years[-1]) + y_idx + 1,
-            "number_of_people": next_statistics[y_idx],
+            "number_of_people": int(next_statistics[y_idx]),
             "carbon_emission": 0,
             "prediction": True})
     return statistics
