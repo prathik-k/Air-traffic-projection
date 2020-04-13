@@ -27,21 +27,22 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
 
     return number_of_people
 
-def generate_statistics_for_request(origin, dest, past_years, number_of_years_to_predict, data_by_year, order_AR):
+def generate_statistics_for_request(origin, dest, number_of_years_to_predict, data_by_year, order_AR):
     statistics = []
+    past_years = list(data_by_year.keys())
     past_statistics = np.zeros((len(past_years)), int)
     for y_idx in range(len(past_years)):
-        number_of_people_air_travelling = count_people_air_travelling(data_by_year, origin, dest, past_years[y_idx])
+        number_of_people_air_travelling = count_people_air_travelling(data_by_year, origin, dest, int(past_years[y_idx]))
         past_statistics[y_idx] = number_of_people_air_travelling
         statistics.append({
-            "year": past_years[y_idx],
+            "year": int(past_years[y_idx]),
             "number_of_people": number_of_people_air_travelling,
             "carbon_emission": 0,
             "prediction": False})
     next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
     for y_idx in range(number_of_years_to_predict):
         statistics.append({
-            "year": past_years[-1] + y_idx + 1,
+            "year": int(past_years[-1]) + y_idx + 1,
             "number_of_people": next_statistics[y_idx],
             "carbon_emission": 0,
             "prediction": True})
@@ -68,17 +69,18 @@ if __name__ == "__main__":
         data_by_year[str(y)] = select_rows(df)
 
     # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
-    past_statistics = np.zeros((len(years)), int)
-    for y_idx in range(len(years)):
-        past_statistics[y_idx] = count_people_air_travelling(data_by_year, args.origin, args.dest, years[y_idx])
+    past_years = list(data_by_year.keys())
+    past_statistics = np.zeros((len(past_years)), int)
+    for y_idx in range(len(past_years)):
+        past_statistics[y_idx] = count_people_air_travelling(data_by_year, args.origin, args.dest, int(past_years[y_idx]))
 
-    print('Number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, years[0], years[-1], past_statistics))
+    print('Number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, int(past_years[0]), int(past_years[-1]), past_statistics))
 
     # Auto-regressive model to predict the number of people that will travel by flight between NY and Boston for each year between year 2020 and year 2025
     next_statistics = full_prediction_AR(past_statistics, args.order_AR, args.number_of_years_to_predict)
 
-    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, years[-1] + 1, years[-1] + args.number_of_years_to_predict, next_statistics))
+    print('Predicted number of people air travelling from {} to {} for years {} to {}: {}'.format(args.origin, args.dest, int(past_years[-1]) + 1, int(past_years[-1]) + args.number_of_years_to_predict, next_statistics))
 
     # Generate statistics in correct format for request
-    statistics = generate_statistics_for_request(args.origin, args.dest, years, args.number_of_years_to_predict, data_by_year, args.order_AR)
+    statistics = generate_statistics_for_request(args.origin, args.dest, args.number_of_years_to_predict, data_by_year, args.order_AR)
     print(statistics)
