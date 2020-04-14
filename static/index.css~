@@ -1,0 +1,44 @@
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+    height: 100%;
+    width: 50%;
+    display: inline-block;
+    margin: 10px 10px 10px 10px;
+}
+
+#map_and_stats {
+    height: 50%;
+}
+
+#trip_info {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 auto;
+}
+
+table, th, td {
+  border: 1px solid #666;
+  border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
+
+table {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#route_form {
+    margin: 10px 10px 10px 10px;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}

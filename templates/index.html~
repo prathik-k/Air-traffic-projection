@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  </head>
+  <body>
+    <div id="route_form">
+      <label for="from_input">From:</label>
+      <input type="text" id="from_input"></input>
+      <label for="to_input">To:</label>
+      <input type="text" id="to_input"></input>
+      <button id="search_button">Search</button>
+    </div>
+    <div id="map_and_stats">
+      <div id="map"></div>
+      <div id="trip_info">
+	<table id="statistics_table">
+	  <tr id="year_row">
+	  </tr>
+	  <tr id="number_of_people_row">
+	  </tr>
+	  <tr id="carbon_emission_row">
+	  </tr>
+	</table>
+	<span>Distance:</span>
+	<span id="trip_summary"></span>
+      </div>
+      <div>
+	<table>
+	  <tr>
+	    <th>Type</th>
+	    <th>Emissions</th>
+	    <th>Cost</th>
+	  </tr>
+	  <tr>
+	    <th>Car</th>
+	    <th id="car_emissions"></th>
+	    <th id="car_cost"></th>
+	  </tr>
+	  <tr>
+	    <th>Plane</th>
+	    <th id="plane_emissions"></th>
+	    <th id="plane_cost"></th>
+	  </tr>
+	</table>
+      </div>
+      <script src="{{ url_for('static', filename='index.js') }}"></script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWh0-DTOorGYoQ_MxSqUblyVvL6e3FRZY&libraries=places&callback=initMap"
+	      async defer></script>
+      <script src="https://d3js.org/d3.v5.min.js"></script>
+  </body>
+</html>
