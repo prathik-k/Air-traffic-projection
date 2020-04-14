@@ -1,4 +1,4 @@
-iata_code,name,type,latitude,longitude
+iata_code,name,type,longitude,latitude
 WKK,Aleknagik / New Airport,medium_airport,-158.617996216, 59.2826004028
 ABE,Lehigh Valley International Airport,medium_airport,-75.44080352783203, 40.652099609375
 ABI,Abilene Regional Airport,medium_airport,-99.68190002440001, 32.4113006592
