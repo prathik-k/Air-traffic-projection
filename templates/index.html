@@ -31,25 +31,6 @@
 	<span>Distance:</span>
 	<span id="trip_summary"></span>
       </div>
-      <div>
-	<table>
-	  <tr>
-	    <th>Type</th>
-	    <th>Emissions</th>
-	    <th>Cost</th>
-	  </tr>
-	  <tr>
-	    <th>Car</th>
-	    <th id="car_emissions"></th>
-	    <th id="car_cost"></th>
-	  </tr>
-	  <tr>
-	    <th>Plane</th>
-	    <th id="plane_emissions"></th>
-	    <th id="plane_cost"></th>
-	  </tr>
-	</table>
-      </div>
       <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
       <script src="{{ url_for('static', filename='index.js') }}"></script>
       <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWh0-DTOorGYoQ_MxSqUblyVvL6e3FRZY&libraries=places&callback=initMap"
