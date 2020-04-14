@@ -18,8 +18,8 @@ function sortData(data) {
     });
 }
 
-function randomRange(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
+function formatNumber(num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
 function initMap() {
@@ -99,6 +99,9 @@ function getTripStatistics(requestData) {
 }
 
 searchButton.onclick = function() {
+    yearRow.selectAll("th:not(.label)").remove();
+    carbonEmissionRow.selectAll("td:not(.label)").remove();
+    numberOfPeopleRow.selectAll("td:not(.label)").remove();
     let request = {
 	origin: fromInput.value,
 	destination: toInput.value,
@@ -138,14 +141,14 @@ searchButton.onclick = function() {
 		    .data(sortedData)
 		    .enter()
 		    .append("td")
-		    .text((d) => d.number_of_people)
+		    .text((d) => formatNumber(d.number_of_people))
 		    .attr("class", (d) => d.prediction ? "prediction" : null);
 
 		carbonEmissionRow.selectAll("td:not(.label)")
 		    .data(sortedData)
 		    .enter()
 		    .append("td")
-		    .text((d) => d.carbon_emission)
+		    .text((d) => formatNumber(d.carbon_emission))
 		    .attr("class", (d) => d.prediction ? "prediction" : null);
 	    })
 	    .catch(err => { console.error(err); });
@@ -154,12 +157,6 @@ searchButton.onclick = function() {
 	fromInput.value = "";
 	toInput.value = "";
 	tripSummary.textContent = directions.routes[0].legs[0].distance.text;
-
-	document.getElementById("car_emissions").textContent = randomRange(100, 400) + "kg";
-	document.getElementById("plane_emissions").textContent = randomRange(1000, 4000) + "kg";
-
-	document.getElementById("car_cost").textContent = "$" + randomRange(50, 200);
-	document.getElementById("plane_cost").textContent = "$" + randomRange(200, 600);
     }).catch((err) => {
 	console.log(`Error: '${err}'`);
     });
