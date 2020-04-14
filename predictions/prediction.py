@@ -17,6 +17,7 @@ def init_app(app):
         data_by_year[str(y)] = select_rows(df)
 
     app.data_by_year = data_by_year
+    app.all_airports = pd.read_csv("Air traffic data/us_airports.csv")
 
     return app
 
