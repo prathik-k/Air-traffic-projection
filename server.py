@@ -25,6 +25,6 @@ def statistics_handler():
 
     city_pairs = get_ap_codes(app.all_airports, origin_geolocation, destination_geolocation)
 
-    result = generate_statistics_for_request(city_pairs, app.data_by_year)
+    result = generate_statistics_for_request(city_pairs, app.data_by_year, app.dot_to_iata, app.iata_to_fuel)
 
     return json.jsonify(result)

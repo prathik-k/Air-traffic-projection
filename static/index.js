@@ -9,9 +9,6 @@ const yearRow = d3.select("#year_row");
 const numberOfPeopleRow = d3.select("#number_of_people_row");
 const carbonEmissionRow = d3.select("#carbon_emission_row");
 
-
-console.log(yearRow);
-
 function sortData(data) {
     return data.sort((a, b) => {
 	return a.year - b.year;
