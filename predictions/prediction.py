@@ -4,8 +4,10 @@ import argparse
 
 if __name__ != "__main__":
     from predictions.AR import full_prediction_AR
+    from predictions.fuel_consumption import compute_CO2_emissions
 else:
     from AR import full_prediction_AR
+    from fuel_consumption import compute_CO2_emissions
 
 
 def init_app(app):
@@ -18,6 +20,8 @@ def init_app(app):
 
     app.data_by_year = data_by_year
     app.all_airports = pd.read_csv("Air traffic data/us_airports.csv")
+    app.dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
+    app.iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
 
     return app
 
@@ -46,7 +50,7 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
     return number_of_people
 
 
-def generate_statistics_for_request(city_pairs, data_by_year, number_of_years_to_predict=3, order_AR=4):
+def generate_statistics_for_request(city_pairs, data_by_year, dot_to_iata, iata_to_fuel, number_of_years_to_predict=3, order_AR=4):
     """
     This function returns a list containing statistics.
     :param city_pairs: list of tuples containing two strings each representing airport codes (origin, destination)
@@ -57,7 +61,8 @@ def generate_statistics_for_request(city_pairs, data_by_year, number_of_years_to
     """
     statistics = []
     past_years = list(data_by_year.keys())
-    past_statistics = np.zeros((len(past_years)), int)
+    past_statistics_people = np.zeros((len(past_years)), int)
+    past_statistics_CO2 = np.zeros((len(past_years)), int)
 
     for y_idx in range(len(past_years)):
         statistics.append({
@@ -68,14 +73,19 @@ def generate_statistics_for_request(city_pairs, data_by_year, number_of_years_to
         for origin, dest in city_pairs:
             number_of_people_air_travelling = count_people_air_travelling(data_by_year, origin, dest,
                                                                           int(past_years[y_idx]))
-            past_statistics[y_idx] += number_of_people_air_travelling
+            past_statistics_people[y_idx] += number_of_people_air_travelling
             statistics[y_idx]["number_of_people"] += int(number_of_people_air_travelling)
-    next_statistics = full_prediction_AR(past_statistics, order_AR, number_of_years_to_predict)
+            if number_of_people_air_travelling !=0:
+                CO2_emissions = compute_CO2_emissions(origin, dest, int(past_years[y_idx]), data_by_year, dot_to_iata, iata_to_fuel)
+                past_statistics_CO2[y_idx] += CO2_emissions
+                statistics[y_idx]["carbon_emission"] += int(CO2_emissions)
+    next_statistics_people = full_prediction_AR(past_statistics_people, order_AR, number_of_years_to_predict)
+    next_statistics_CO2 = full_prediction_AR(past_statistics_CO2, order_AR, number_of_years_to_predict)
     for y_idx in range(number_of_years_to_predict):
         statistics.append({
             "year": int(past_years[-1]) + y_idx + 1,
-            "number_of_people": int(next_statistics[y_idx]),
-            "carbon_emission": 0,
+            "number_of_people": int(next_statistics_people[y_idx]),
+            "carbon_emission": int(next_statistics_CO2[y_idx]),
             "prediction": True})
     return statistics
 
@@ -95,9 +105,11 @@ if __name__ == "__main__":
     years = [2015, 2016, 2017, 2018, 2019]
     data_by_year = {}
     for y in years:
-        df = pd.read_csv('../Air traffic data/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
+        df = pd.read_csv('Air traffic data/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
             ['Unnamed: 14'], axis=1)
         data_by_year[str(y)] = select_rows(df)
+    dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
+    iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
 
     # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
     past_years = list(data_by_year.keys())
@@ -123,6 +135,5 @@ if __name__ == "__main__":
 
     # Generate statistics in correct format for request
     city_pairs = [('ATL', 'JFK'), ('ATL', 'EWK'), ('ATL', 'LGA')]
-    statistics = generate_statistics_for_request(city_pairs, data_by_year, args.number_of_years_to_predict,
-                                                 args.order_AR)
+    statistics = generate_statistics_for_request(city_pairs, data_by_year, dot_to_iata, iata_to_fuel)
     print(statistics)

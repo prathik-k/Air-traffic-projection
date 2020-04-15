@@ -1,0 +1,58 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def compute_distances_vector_in_miles(iata_to_fuel):
+    x_nautical_miles = np.array(iata_to_fuel.keys()[1:]).astype(float)
+    x_miles = x_nautical_miles * 1.15078  # 1 nautical mile = 1.15078 mile
+    return x_miles
+
+
+def compute_polynomial_coefficients(x, y, degree):
+    coefficients = np.polyfit(x, y, degree)
+    return coefficients
+
+
+def get_flight_distance(origin, dest, year, data_by_year):
+    distance_in_miles = np.array(data_by_year[str(year)].iloc[np.where(
+        (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['DISTANCE'])[0]
+    return distance_in_miles
+
+
+def compute_CO2_emissions(origin, dest, year, data_by_year, dot_to_iata, iata_to_fuel, degree=5):
+    x_miles = compute_distances_vector_in_miles(iata_to_fuel)
+
+    flight_distance = get_flight_distance(origin, dest, year, data_by_year)
+
+    dot_codes = np.array(data_by_year[str(year)].iloc[np.where(
+        (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['AIRCRAFT_TYPE'])
+    iata_codes = []
+    fuel_total_consumption_kg = 0
+    for k in range(len(dot_codes)):
+        iata_code = np.array(dot_to_iata.iloc[np.where(dot_to_iata['DOT'] == dot_codes[k])]['IATA'])[0]
+        iata_codes.append(iata_code)
+
+        y = np.array(iata_to_fuel.iloc[np.where(iata_to_fuel['IATA'] == '320')], dtype=float)[0][1:]
+        y = y[~np.isnan(y)]
+        coefs = compute_polynomial_coefficients(x_miles[:len(y)], y, degree)
+        fuel_consumed_for_distance = np.polyval(coefs, flight_distance)
+        fuel_total_consumption_kg += fuel_consumed_for_distance
+    CO2_kg = round(fuel_total_consumption_kg * 3.15)
+
+    return CO2_kg
+
+
+def plot_aircraft_codes_histogram(data_by_year):
+    years_str = list(data_by_year.keys())
+    dot_codes_used = []
+    for yr_str in years_str:
+        dot_codes_used += list(data_by_year[yr_str]['AIRCRAFT_TYPE'])
+
+    dot_codes_used = np.array(dot_codes_used)
+    dot_codes = np.unique(dot_codes_used)
+
+    plt.title("Types of aircrafts used between 2015 and 2019")
+    plt.xlabel("DOT Aircraft code")
+    plt.ylabel("Number of flights done")
+    plt.hist(dot_codes_used, dot_codes)
+    plt.show()

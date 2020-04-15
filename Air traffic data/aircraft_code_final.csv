@@ -1,0 +1,76 @@
+DOT,Model,ICAO,IATA
+339,Airbus Industrie A330-900,A339,330
+359,Airbus Industrie A350-900,A359,359
+405,Beech 1900 A/B/C/D,B190,BE1
+406,Beech 200 Super Kingair,,BE1
+415,Cessna C208B/Grand Caravan,C208,CNA
+416,Cessna 208 Caravan,C208,CNA
+417,Cessna 406 Caravan II,,CNA
+432,Saab 2000,SB20,S20
+441,Aerospatiale/Aeritalia ATR-42,AT43,AT4
+442,Aerospatiale/Aeritalia ATR-72,AT72,AT7
+448,Dornier 228,,D28
+449,Dornier 328,D328,D38
+455,Fairchild Metro 23,,D28
+456,Saab-Fairchild 340/B,SF34,SF3
+458,Beechcraft Super King Air,,BE1
+461,Embraer EMB-120 Brasilia,,EM2
+469,British Aerospace Jetstream 31,JS31,J31
+471,British Aerospace Jetstream 41,,J41
+479,Pilatus PC-12,PC12,PL2
+482,De Havilland DHC8-400 Dash-8,DH8D,DH4
+483,De Havilland DHC8-100 Dash-8,DH8A,DH1
+484,De Havilland DHC8-300 Dash 8,,DH3
+485,De Havilland Twin Otter DHC-6,DHC6,DHT
+491,De Havilland DHC8-200Q Dash-8,,DH2
+530,Bombardier CRJ550,CRJ7,CR7
+603,Fokker 100,,100
+608,Boeing 717-200,B712,717
+612,Boeing 737-700/700LR/Max 7,B37M,7M7
+614,Boeing 737-800,B738,738
+616,Boeing 737-500,B735,735
+617,Boeing 737-400,B734,734
+619,Boeing 737-300,B733,733
+620,Boeing 737-100/200,B721,721
+621,Boeing 737-200C,,73L
+622,Boeing 757-200,B752,752
+623,Boeing 757-300,B753,753
+624,Boeing 767-400/ER,B764,764
+625,Boeing 767-200/ER/EM,B762,76X
+626,Boeing 767-300/300ER,B763,76W
+627,Boeing 777-200ER/200LR/233LR,B77L,77X
+628,Canadair RJ-100/RJ-100ER,CRJ1,CR1
+629,Canadair RJ-200ER /RJ-440,CRJ2,CR2
+631,Canadair RJ-700,CRJ7,CR7
+632,Dornier 328 Jet,D328,D38
+634,Boeing 737-900,B739,739
+637,Boeing 777-300/300ER/333ER,B773,773
+638,Canadair CRJ 900,CRJ9,CR9
+642,Raytheon Beechcraft Hawker 400XP,,BE1
+643,1124A Westwind II,,WWP
+655,McDonnell Douglas DC9 Super 80/MD81/82/83/88,MD81,M81
+656,McDonnell Douglas MD-90,MD90,M90
+658,Bombardier BD-700 Global Express,GL5T,LRJ
+669,Bombardier (Gates) Learjet 60,,LRJ
+673,Embraer ERJ-175,E75S/L,E75
+674,Embraer-135,E135,ER3
+675,Embraer-145,E145,ER4
+676,Embraer-140,E135,ER3
+677,Embraer-Emb-170,E170,E70
+678,Embraer 190,E190,E90
+687,Airbus Industrie A330-300,A333,333
+694,Airbus Industrie A320-100/200,A320,320
+696,Airbus Industrie A330-200,A332,332
+698,Airbus Industrie A319,A319,319
+699,Airbus Industrie A321,A321,321
+721,Airbus Industrie A321-200n,A321,321
+722,Airbus Industrie A320-200n,A321,320
+723,A200-100 BD-500-1A10,BCS1,310
+819,Boeing 747-400,,744
+822,Boeing 747SP,,74L
+837,Boeing 787-10 Dreamliner,B78X,789
+838,Boeing B737 Max 800,B38M,737
+839,Boeing B737 Max 900,B39M,737
+887,B787-800 Dreamliner,B788,788
+888,Boeing 737-900ER,B739,739
+889,B787-900 Dreamliner,B789,789
