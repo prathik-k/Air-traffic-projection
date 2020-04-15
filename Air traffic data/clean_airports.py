@@ -15,8 +15,8 @@ del us_ap['local_code'],us_ap['municipality'],us_ap['continent'],us_ap['elevatio
 us_ap = us_ap.dropna(axis=0,subset=['iata_code'])
 
 new_cols = us_ap['coordinates'].str.split(',',n=1,expand=True)
-us_ap['latitude'] = new_cols[0]
-us_ap['longitude'] = new_cols[1]
+us_ap['longitude'] = new_cols[0]
+us_ap['latitude'] = new_cols[1]
 
 us_ap = us_ap.drop(['coordinates'],axis=1)
 us_ap.to_csv('us_airports.csv',sep=',',encoding='utf-8',index=False)
