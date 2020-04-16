@@ -18,6 +18,7 @@ def get_flight_distance(origin, dest, year, data_by_year):
         (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['DISTANCE'])[0]
     return distance_in_miles
 
+
 def compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel, degree=4):
     coefs_of_dot_codes = {}
 
@@ -74,3 +75,13 @@ def plot_aircraft_codes_histogram(data_by_year):
     plt.ylabel("Number of flights done")
     plt.hist(dot_codes_used, dot_codes)
     plt.show()
+
+
+# Uses average mileage for all cars classified by category (according to EPA classification). Estimates mileage from distance between cities.
+# Train fuel economy on a passenger-miles per gallon basis on a national average AMTRAK load factor of 54.6%.
+def other_transport(dist):
+    vehicle_classes = {'Two-seater': 22, 'Subcompact': 24, 'Compact': 26, 'Midsize Sedan': 26, 'Large Sedan': 21,
+                       'Hatchback': 27, 'Pickup truck': 18, 'Minivan': 20, 'Small SUV': 24, 'Standard SUV': 18}
+    vehicle_classes.update({i: dist * vehicle_classes[i] for i in vehicle_classes.keys()})
+    train_avg = {'train': 71.6 * dist}
+    return (vehicle_classes, train_avg)
