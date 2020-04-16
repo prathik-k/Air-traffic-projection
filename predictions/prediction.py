@@ -4,10 +4,10 @@ import argparse
 
 if __name__ != "__main__":
     from predictions.AR import full_prediction_AR
-    from predictions.fuel_consumption import compute_CO2_emissions
+    from predictions.fuel_consumption import compute_CO2_emissions, compute_definitive_coefficients
 else:
     from AR import full_prediction_AR
-    from fuel_consumption import compute_CO2_emissions
+    from fuel_consumption import compute_CO2_emissions, compute_definitive_coefficients
 
 
 def init_app(app):
@@ -22,6 +22,7 @@ def init_app(app):
     app.all_airports = pd.read_csv("Air traffic data/us_airports.csv")
     app.dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
     app.iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
+    app.coefs_of_dot_codes = compute_definitive_coefficients(app.data_by_year, app.dot_to_iata, app.iata_to_fuel)
 
     return app
 
@@ -50,7 +51,8 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
     return number_of_people
 
 
-def generate_statistics_for_request(city_pairs, data_by_year, dot_to_iata, iata_to_fuel, number_of_years_to_predict=3, order_AR=4):
+def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes, number_of_years_to_predict=3,
+                                    order_AR=4):
     """
     This function returns a list containing statistics.
     :param city_pairs: list of tuples containing two strings each representing airport codes (origin, destination)
@@ -75,8 +77,9 @@ def generate_statistics_for_request(city_pairs, data_by_year, dot_to_iata, iata_
                                                                           int(past_years[y_idx]))
             past_statistics_people[y_idx] += number_of_people_air_travelling
             statistics[y_idx]["number_of_people"] += int(number_of_people_air_travelling)
-            if number_of_people_air_travelling !=0:
-                CO2_emissions = compute_CO2_emissions(origin, dest, int(past_years[y_idx]), data_by_year, dot_to_iata, iata_to_fuel)
+            if number_of_people_air_travelling != 0:
+                CO2_emissions = compute_CO2_emissions(origin, dest, int(past_years[y_idx]), data_by_year,
+                                                      coefs_of_dot_codes)
                 past_statistics_CO2[y_idx] += CO2_emissions
                 statistics[y_idx]["carbon_emission"] += int(CO2_emissions)
     next_statistics_people = full_prediction_AR(past_statistics_people, order_AR, number_of_years_to_predict)
