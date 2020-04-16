@@ -9,13 +9,18 @@
   <body>
     <div id="route_form">
       <label for="from_input">From:</label>
-      <input type="text" id="from_input"></input>
+      <input type="text" id="from_input">
       <label for="to_input">To:</label>
-      <input type="text" id="to_input"></input>
+      <input type="text" id="to_input">
       <button id="search_button">Search</button>
     </div>
+    <div id="map"></div>
+    <div>
+      <svg id="double_slider"></svg>
+    </div>
+    <div id="graph_div"></div>
+    <!--
     <div id="map_and_stats">
-      <div id="map"></div>
       <div id="trip_info">
 	<table id="statistics_table">
 	  <tr id="year_row">
@@ -28,12 +33,19 @@
 	    <td class="label">Carbon emission</td>
 	  </tr>
 	</table>
-	<span>Distance:</span>
-	<span id="trip_summary"></span>
+	<svg id="slider"></svg>
+	<div>
+	  <span>Distance:</span>
+	  <span id="trip_summary"></span></div>
+	</div>
+	<svg id="graph_svg"></svg>
       </div>
-      <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='index.js') }}"></script>
-      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWh0-DTOorGYoQ_MxSqUblyVvL6e3FRZY&libraries=places&callback=initMap"
+    </div>
+    -->
+    <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='d3-simple-slider.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWh0-DTOorGYoQ_MxSqUblyVvL6e3FRZY&libraries=places&callback=initMap"
 	      async defer></script>
   </body>
 </html>

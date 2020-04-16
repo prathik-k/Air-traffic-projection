@@ -1,35 +1,9 @@
 /* Always set the map height explicitly to define the size of the div
  * element that contains the map. */
 #map {
-    height: 100%;
-    width: 50%;
-    display: inline-block;
-    margin: 10px 10px 10px 10px;
-}
-
-#map_and_stats {
     height: 50%;
-}
-
-#trip_info {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 auto;
-}
-
-table, th, td {
-  border: 1px solid #666;
-  border-collapse: collapse;
-}
-
-th, td {
-    padding: 10px;
-}
-
-table {
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    width: 100%;
+    margin: 10px 10px 10px 10px;
 }
 
 #route_form {
@@ -43,7 +17,61 @@ html, body {
     padding: 0;
 }
 
-.prediction {
-    font-style: italic;
-    color: darkred;
+.curve {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.curve_hint {
+    fill: none;
+    stroke-width: 1px;
+    stroke-dasharray: 6,2,4,2;
+}
+
+.people {
+    stroke: #ff0000;
+}
+
+.people_dots {
+    fill: #ff0000;
+    stroke-width: 2px;
+    stroke: white;
+}
+
+.people_dots_prediction {
+    fill: #ff7d7d;
+    stroke-width: 2px;
+    stroke: white;
+}
+
+.emission {
+    stroke: #0000ff;
+}
+
+.emission_dots {
+    fill: #0000ff;
+    stroke-width: 2px;
+    stroke: white;
+}
+
+.emission_dots_prediction {
+    fill: #7d7dff;
+    stroke-width: 2px;
+    stroke: white;
+}
+
+
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 200px;
+    height: 40px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: white;
+    border: solid 1px;
+    border-color: #CCCCCC;
+    border-radius: 8px;
+    pointer-events: none;
 }

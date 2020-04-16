@@ -5,9 +5,52 @@ var placesService;
 
 const URL = "http://127.0.0.1:5000/statistics";
 
-const yearRow = d3.select("#year_row");
-const numberOfPeopleRow = d3.select("#number_of_people_row");
-const carbonEmissionRow = d3.select("#carbon_emission_row");
+let statisticsData = null;
+
+const doubleSliderSvg = d3.select("#double_slider")
+      .attr("width", 500)
+      .attr("height", 50);
+
+let doubleSlider     = null;
+let doubleSliderStep = null;
+
+const svgWidth  = (window.innerWidth - 20) / 2;
+const svgHeight = 400;
+
+const graphWidth  = 0.7 * svgWidth;
+const graphHeight = 0.7 * svgHeight;
+
+const peopleGraphSvg = d3.select("#graph_div")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight);
+
+const emissionGraphSvg = d3.select("#graph_div")
+    .append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
+
+let peopleGraph   = null;
+let emissionGraph = null;
+
+let peopleDiv = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+let emissionDiv = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+function cleanData(data) {
+    return newData = data.map(d => {
+	return {
+	    ...d,
+	    year: new Date(Date.UTC(d.year))
+	};
+    });
+}
 
 function sortData(data) {
     return data.sort((a, b) => {
@@ -15,8 +58,18 @@ function sortData(data) {
     });
 }
 
+function filterData(data, start, end) {
+    let newData = [];
+    data.forEach(d => {
+	if (d.year.getUTCFullYear() >= start && d.year.getUTCFullYear() <= end) {
+	    newData.push(d);
+	}
+    });
+    return newData;
+}
+
 function formatNumber(num) {
-  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function initMap() {
@@ -84,7 +137,7 @@ function getTripStatistics(requestData) {
 	mode: "cors",
 	headers: {
 	    "Content-Type": "application/json",
-	    "Access-Control-Allow-Origin": "0.0.0.0:5000",
+	    //"Access-Control-Allow-Origin": "0.0.0.0:5000",
 	},
 	body: JSON.stringify(requestData),
     }).then(response => {
@@ -95,10 +148,188 @@ function getTripStatistics(requestData) {
     });
 }
 
+function drawGraphs(data) {
+    if (!data) return;
+    if (doubleSliderStep.value()[0] == doubleSliderStep.value()[1]) return;
+    let filteredData = filterData(data, doubleSliderStep.value()[0], doubleSliderStep.value()[1]);
+
+    drawPeopleGraph(data, filteredData);
+    drawEmissionGraph(data, filteredData);
+}
+
+function drawPeopleGraph(data, filteredData) {
+    const xScale = d3.scaleTime()
+	  .domain([
+	      d3.min(data, (d) => { return d.year; }),
+	      d3.max(data, (d) => { return d.year; })
+	  ])
+	  .range([0, graphWidth])
+	  .nice();
+
+    const yScale = d3.scaleLinear()
+	  .domain([
+	      0,
+	      d3.max(data, (d) => { return d.number_of_people; })
+	  ])
+	  .range([graphHeight, 0])
+	  .nice();
+
+    if (peopleGraph) {
+	peopleGraph.remove();
+    }
+
+    peopleGraph = peopleGraphSvg.append("g")
+	.attr("transform", `translate(${(svgWidth - graphWidth) / 2}, ${(svgHeight - graphHeight) / 2})`);
+
+    let xAxis = peopleGraph.append("g")
+	.attr("transform", `translate(0, ${graphHeight})`)
+	.call(d3.axisBottom(xScale));
+
+    let yAxis = peopleGraph.append("g")
+	.call(d3.axisLeft(yScale));
+
+    let line = d3.line()
+	.x((d) => { return xScale(d.year); })
+	.y((d) => { return yScale(d.number_of_people); })
+	.curve(d3.curveMonotoneX);
+
+    peopleGraph.append("path")
+	.datum(filteredData)
+	.attr("class", "curve people")
+	.attr("d", line);
+
+    peopleGraph.append("path")
+	.datum(data)
+	.attr("class", "curve_hint people")
+	.attr("d", line);
+
+    peopleGraph.selectAll(".people_dots")
+	.data(filteredData)
+	.enter()
+	.append("circle")
+	.attr("cx", d => { return xScale(d.year); })
+	.attr("cy", d => { return yScale(d.number_of_people); })
+	.attr("r", "5px")
+	.attr("class", d => {
+	    if (d.prediction) {
+		return "people_dots_prediction";
+	    }
+	    return "people_dots";
+	})
+	.on("mouseover", function(d) {
+	    d3.select(this).attr("r", "7px");
+	    const leftPosition = d3.event.pageX - 100;
+	    const topPosition = d3.event.pageY - 60;
+	    peopleDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg`)
+		.style("left", `${leftPosition}px`)
+		.style("top", `${topPosition}px`)
+		.style("opacity", 1);
+	})
+	.on("mouseout", function(d) {
+	    d3.select(this).attr("r", "5px");
+	    peopleDiv.style("opacity", 0);
+	});
+
+    let xAxisLabel = peopleGraph.append("text")
+	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + 40})`)
+	.style("text-anchor", "middle")
+	.text("Year");
+
+    let yAxisLabel = peopleGraph.append("text")
+	.attr("transform", "rotate(-90)")
+	.attr("y", -70)
+	.attr("x", -graphHeight / 2)
+	.style("text-anchor", "middle")
+	.text("Number of people");
+}
+
+function drawEmissionGraph(data, filteredData) {
+    const xScale = d3.scaleTime()
+	  .domain([
+	      d3.min(data, (d) => { return d.year; }),
+	      d3.max(data, (d) => { return d.year; })
+	  ])
+	  .range([0, graphWidth])
+	  .nice();
+
+    const yScale = d3.scaleLinear()
+	  .domain([
+	      0,
+	      d3.max(data, (d) => { return d.carbon_emission; })
+	  ])
+	  .range([graphHeight, 0])
+	  .nice();
+
+    if (emissionGraph) {
+	emissionGraph.remove();
+    }
+
+    emissionGraph = emissionGraphSvg.append("g")
+	.attr("transform", `translate(${(svgWidth - graphWidth) / 2}, ${(svgHeight - graphHeight) / 2})`);
+
+    let xAxis = emissionGraph.append("g")
+	.attr("transform", `translate(0, ${graphHeight})`)
+	.call(d3.axisBottom(xScale));
+
+    let yAxis = emissionGraph.append("g")
+	.call(d3.axisLeft(yScale));
+
+    let line = d3.line()
+	.x((d) => { return xScale(d.year); })
+	.y((d) => { return yScale(d.carbon_emission); })
+	.curve(d3.curveMonotoneX);
+
+    emissionGraph.append("path")
+	.datum(filteredData)
+	.attr("class", "curve emission")
+	.attr("d", line);
+
+    emissionGraph.append("path")
+	.datum(data)
+	.attr("class", "curve_hint emission")
+	.attr("d", line);
+
+    emissionGraph.selectAll(".emission_dots")
+	.data(filteredData)
+	.enter()
+	.append("circle")
+	.attr("cx", d => { return xScale(d.year); })
+	.attr("cy", d => { return yScale(d.carbon_emission); })
+	.attr("r", "5px")
+	.attr("class", d => {
+	    if (d.prediction) {
+		return "emission_dots_prediction";
+	    }
+	    return "emission_dots";
+	})
+	.on("mouseover", function(d) {
+	    d3.select(this).attr("r", "7px");
+	    const leftPosition = d3.event.pageX - 100;
+	    const topPosition = d3.event.pageY - 60;
+	    emissionDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg`)
+		.style("left", `${leftPosition}px`)
+		.style("top", `${topPosition}px`)
+		.style("opacity", 1);
+	})
+	.on("mouseout", function(d) {
+	    d3.select(this).attr("r", "5px");
+	    emissionDiv.style("opacity", 0);
+	});
+
+    let xAxisLabel = emissionGraph.append("text")
+	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + 40})`)
+	.style("text-anchor", "middle")
+	.text("Year");
+
+    let yAxisLabel = emissionGraph.append("text")
+	.attr("transform", "rotate(-90)")
+	.attr("y", -70)
+	.attr("x", -graphHeight / 2)
+	.style("text-anchor", "middle")
+	.text("Carbon Emission (kg)");
+}
+
 searchButton.onclick = function() {
-    yearRow.selectAll("th:not(.label)").remove();
-    carbonEmissionRow.selectAll("td:not(.label)").remove();
-    numberOfPeopleRow.selectAll("td:not(.label)").remove();
     let request = {
 	origin: fromInput.value,
 	destination: toInput.value,
@@ -126,34 +357,37 @@ searchButton.onclick = function() {
 
 	getTripStatistics(requestData)
 	    .then(data => {
-		const sortedData = sortData(data);
-		yearRow.selectAll("th:not(.label)")
-		    .data(sortedData)
-		    .enter()
-		    .append("th")
-		    .text((d) => d.year)
-		    .attr("class", (d) => d.prediction ? "prediction" : null);
+		statisticsData = sortData(cleanData(data));
+		if (doubleSlider) {
+		    doubleSlider.remove();
+		}
+		doubleSlider = doubleSliderSvg.append("g")
+		    .attr("transform", "translate(50, 10)");
 
-		numberOfPeopleRow.selectAll("td:not(.label)")
-		    .data(sortedData)
-		    .enter()
-		    .append("td")
-		    .text((d) => formatNumber(d.number_of_people))
-		    .attr("class", (d) => d.prediction ? "prediction" : null);
+		let minYear = d3.min(statisticsData, d => { return d.year.getUTCFullYear(); });
+		let maxYear = d3.max(statisticsData, d => { return d.year.getUTCFullYear(); });
 
-		carbonEmissionRow.selectAll("td:not(.label)")
-		    .data(sortedData)
-		    .enter()
-		    .append("td")
-		    .text((d) => formatNumber(d.carbon_emission))
-		    .attr("class", (d) => d.prediction ? "prediction" : null);
+		doubleSliderStep = d3.sliderBottom()
+		    .min(minYear)
+		    .max(maxYear)
+		    .width(400)
+		    .tickFormat(d3.format("d"))
+		    .ticks(maxYear - minYear + 2)
+		    .default([minYear, maxYear])
+		    .step(1)
+		    .fill('#2196f3')
+		    .on("onchange", _ => {
+			drawGraphs(statisticsData);
+		    });
+		doubleSlider.call(doubleSliderStep);
+
+		drawGraphs(statisticsData);
 	    })
 	    .catch(err => { console.error(err); });
 
 	directionsRenderer.setDirections(directions);
 	fromInput.value = "";
 	toInput.value = "";
-	tripSummary.textContent = directions.routes[0].legs[0].distance.text;
     }).catch((err) => {
 	console.log(`Error: '${err}'`);
     });
