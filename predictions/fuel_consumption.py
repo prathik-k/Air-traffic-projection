@@ -31,14 +31,22 @@ def compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel, deg
     dot_codes = np.unique(dot_codes_used)
     for k in range(len(dot_codes)):
         iata_code = np.array(dot_to_iata.iloc[np.where(dot_to_iata['DOT'] == dot_codes[k])]['IATA'])[0]
+        seats_nb = np.array(dot_to_iata.iloc[np.where(dot_to_iata['DOT'] == dot_codes[k])]['Seats'])[0]
+        coefs_of_dot_codes[dot_codes[k]] = {"seats": seats_nb, "coefs": None}
+
         if len(iata_to_fuel.iloc[np.where(iata_to_fuel['IATA'] == iata_code)]) != 0:
             y = np.array(iata_to_fuel.iloc[np.where(iata_to_fuel['IATA'] == iata_code)])[0][1:]
             y = np.array(y, dtype=float)
             y = y[~np.isnan(y)]
             coefs = compute_polynomial_coefficients(x_miles[:len(y)], y, degree)
-            coefs_of_dot_codes[dot_codes[k]] = coefs
+            coefs_of_dot_codes[dot_codes[k]]["coefs"] = coefs
 
-    coefs_of_dot_codes[0] = np.mean(list((coefs_of_dot_codes.values())), axis=0)
+    all_coefs = []
+    for sub in coefs_of_dot_codes:
+        if ((coefs_of_dot_codes[sub]["coefs"]) is not None):
+            all_coefs.append(coefs_of_dot_codes[sub]["coefs"])
+    coefs_of_dot_codes[0] = {"coefs" : np.mean(all_coefs, axis=0),
+                             "seats" : np.mean([coefs_of_dot_codes[sub]["seats"] for sub in coefs_of_dot_codes], axis=0)}
 
     return coefs_of_dot_codes
 
@@ -48,14 +56,17 @@ def compute_CO2_emissions(origin, dest, year, data_by_year, coefs_of_dot_codes):
 
     dot_codes = np.array(data_by_year[str(year)].iloc[np.where(
         (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['AIRCRAFT_TYPE'])
+    passengers_nb = np.array(data_by_year[str(year)].iloc[np.where(
+        (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['PASSENGERS'])
     fuel_total_consumption_kg = 0
     for k in range(len(dot_codes)):
-        if dot_codes[k] not in coefs_of_dot_codes:
-            coefs = coefs_of_dot_codes[0]
+        if coefs_of_dot_codes[dot_codes[k]]["coefs"] is None:
+            coefs = coefs_of_dot_codes[0]["coefs"]
         else:
-            coefs = coefs_of_dot_codes[dot_codes[k]]
+            coefs = coefs_of_dot_codes[dot_codes[k]]["coefs"]
         fuel_consumed_for_distance = np.polyval(coefs, flight_distance)
-        fuel_total_consumption_kg += fuel_consumed_for_distance
+        estimated_number_of_flights = int( (passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"]))
+        fuel_total_consumption_kg += fuel_consumed_for_distance * estimated_number_of_flights
     CO2_kg = round(fuel_total_consumption_kg * 3.15)
 
     return CO2_kg

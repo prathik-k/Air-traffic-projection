@@ -6,7 +6,7 @@ DOT,Model,ICAO,IATA,Seats
 415,Cessna C208B/Grand Caravan,C208,CNA,13
 416,Cessna 208 Caravan,C208,CNA,9
 417,Cessna 406 Caravan II,,CNA,14
-432,Saab 2000,SB20,S20,50 
+432,Saab 2000,SB20,S20,50
 441,Aerospatiale/Aeritalia ATR-42,AT43,AT4,42
 442,Aerospatiale/Aeritalia ATR-72,AT72,AT7,72
 448,Dornier 228,,D28,19
@@ -14,7 +14,7 @@ DOT,Model,ICAO,IATA,Seats
 455,Fairchild Metro 23,,D28,22
 456,Saab-Fairchild 340/B,SF34,SF3,34
 458,Beechcraft Super King Air,,BE1,10
-461,Embraer EMB-120 Brasilia,,EM2,30 
+461,Embraer EMB-120 Brasilia,,EM2,30
 469,British Aerospace Jetstream 31,JS31,J31,19
 471,British Aerospace Jetstream 41,,J41,29
 479,Pilatus PC-12,PC12,PL2,8
@@ -26,11 +26,11 @@ DOT,Model,ICAO,IATA,Seats
 530,Bombardier CRJ550,CRJ7,CR7,50
 603,Fokker 100,,100,122
 608,Boeing 717-200,B712,717,117
-612,Boeing 737-700/700LR/Max 7,B37M,7M7,143 
+612,Boeing 737-700/700LR/Max 7,B37M,7M7,143
 614,Boeing 737-800,B738,738,160
 616,Boeing 737-500,B735,735,126
 617,Boeing 737-400,B734,734,159
-619,Boeing 737-300,B733,733,143 
+619,Boeing 737-300,B733,733,143
 620,Boeing 737-100/200,B721,721,109
 621,Boeing 737-200C,,73L,112
 622,Boeing 757-200,B752,752,169

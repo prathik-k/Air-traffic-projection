@@ -108,7 +108,7 @@ if __name__ == "__main__":
     years = [2015, 2016, 2017, 2018, 2019]
     data_by_year = {}
     for y in years:
-        df = pd.read_csv('Air traffic data/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
+        df = pd.read_csv('Air traffic data/Yearly traffic/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
             ['Unnamed: 14'], axis=1)
         data_by_year[str(y)] = select_rows(df)
     dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
