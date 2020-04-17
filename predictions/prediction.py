@@ -51,7 +51,7 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
     return number_of_people
 
 
-def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes, number_of_years_to_predict=3,
+def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes, number_of_years_to_predict=6,
                                     order_AR=4):
     """
     This function returns a list containing statistics.
