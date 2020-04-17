@@ -69,6 +69,10 @@ function filterData(data, start, end) {
     return newData;
 }
 
+function getFirstPredictionData(sortedData) {
+    return sortedData.find(d => { return d.prediction; });
+}
+
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
@@ -159,6 +163,7 @@ function drawGraphs(data) {
 }
 
 function drawPeopleGraph(data, filteredData) {
+    const firstPrediction = getFirstPredictionData(data);
     const xScale = d3.scaleTime()
 	  .domain([
 	      d3.min(data, (d) => { return d.year; }),
@@ -188,6 +193,12 @@ function drawPeopleGraph(data, filteredData) {
 
     let yAxis = peopleGraph.append("g")
 	.call(d3.axisLeft(yScale));
+
+    let predictionZone = peopleGraph.append("rect")
+	.attr("width", xScale.range()[1] - xScale(firstPrediction.year))
+	.attr("height", graphHeight)
+	.attr("x", xScale(firstPrediction.year))
+	.attr("class", "people_prediction_zone");
 
     let line = d3.line()
 	.x((d) => { return xScale(d.year); })
@@ -245,6 +256,7 @@ function drawPeopleGraph(data, filteredData) {
 }
 
 function drawEmissionGraph(data, filteredData) {
+    const firstPrediction = getFirstPredictionData(data);
     const xScale = d3.scaleTime()
 	  .domain([
 	      d3.min(data, (d) => { return d.year; }),
@@ -274,6 +286,12 @@ function drawEmissionGraph(data, filteredData) {
 
     let yAxis = emissionGraph.append("g")
 	.call(d3.axisLeft(yScale));
+
+    let predictionZone = emissionGraph.append("rect")
+	.attr("width", xScale.range()[1] - xScale(firstPrediction.year))
+	.attr("height", graphHeight)
+	.attr("x", xScale(firstPrediction.year))
+	.attr("class", "emission_prediction_zone");
 
     let line = d3.line()
 	.x((d) => { return xScale(d.year); })
