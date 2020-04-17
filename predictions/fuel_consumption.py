@@ -90,9 +90,12 @@ def plot_aircraft_codes_histogram(data_by_year):
 
 # Uses average mileage for all cars classified by category (according to EPA classification). Estimates mileage from distance between cities.
 # Train fuel economy on a passenger-miles per gallon basis on a national average AMTRAK load factor of 54.6%.
+
+#Output is 2 dictionaries with CO2 emission per person for each type of car and train.
 def other_transport(dist):
-    vehicle_classes = {'Two-seater': 22, 'Subcompact': 24, 'Compact': 26, 'Midsize Sedan': 26, 'Large Sedan': 21,
+    car_fuel_emissions = {'Two-seater': 22, 'Subcompact': 24, 'Compact': 26, 'Midsize Sedan': 26, 'Large Sedan': 21,
                        'Hatchback': 27, 'Pickup truck': 18, 'Minivan': 20, 'Small SUV': 24, 'Standard SUV': 18}
-    vehicle_classes.update({i: dist * vehicle_classes[i] for i in vehicle_classes.keys()})
-    train_avg = {'train': 71.6 * dist}
-    return (vehicle_classes, train_avg)
+    car_fuel_emissions.update({i: 9.07185*(dist/car_fuel_emissions[i]) for i in car_fuel_emissions.keys()})    
+
+    train_avg = {'train': 10.1514*(dist/71.6)}
+    return (car_fuel_emissions, train_avg)
