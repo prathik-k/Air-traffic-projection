@@ -62,10 +62,14 @@ def compute_CO2_emissions(origin, dest, year, data_by_year, coefs_of_dot_codes):
     for k in range(len(dot_codes)):
         if coefs_of_dot_codes[dot_codes[k]]["coefs"] is None:
             coefs = coefs_of_dot_codes[0]["coefs"]
+            estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
+        elif dot_codes[k] not in coefs_of_dot_codes:
+            coefs = coefs_of_dot_codes[0]["coefs"]
+            estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[0]["seats"])))
         else:
             coefs = coefs_of_dot_codes[dot_codes[k]]["coefs"]
+            estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
         fuel_consumed_for_distance = np.polyval(coefs, flight_distance)
-        estimated_number_of_flights = int(round( (passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
         fuel_total_consumption_kg += fuel_consumed_for_distance * estimated_number_of_flights
     CO2_kg = round(fuel_total_consumption_kg * 3.15)
 
