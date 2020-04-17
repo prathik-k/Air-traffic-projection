@@ -47,7 +47,8 @@ function cleanData(data) {
     return newData = data.map(d => {
 	return {
 	    ...d,
-	    year: new Date(Date.UTC(d.year))
+	    year: new Date(Date.UTC(d.year)),
+	    per_person: parseFloat(d.carbon_emission) / parseFloat(d.number_of_people),
 	};
     });
 }
@@ -219,8 +220,8 @@ function drawPeopleGraph(data, filteredData) {
 	.on("mouseover", function(d) {
 	    d3.select(this).attr("r", "7px");
 	    const leftPosition = d3.event.pageX - 100;
-	    const topPosition = d3.event.pageY - 60;
-	    peopleDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg`)
+	    const topPosition = d3.event.pageY - 80;
+	    peopleDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg<br/>Carbon Emission/Pax: ${d3.format(".2f")(d.per_person)} kg`)
 		.style("left", `${leftPosition}px`)
 		.style("top", `${topPosition}px`)
 		.style("opacity", 1);
@@ -305,8 +306,8 @@ function drawEmissionGraph(data, filteredData) {
 	.on("mouseover", function(d) {
 	    d3.select(this).attr("r", "7px");
 	    const leftPosition = d3.event.pageX - 100;
-	    const topPosition = d3.event.pageY - 60;
-	    emissionDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg`)
+	    const topPosition = d3.event.pageY - 80;
+	    emissionDiv.html(`Year: ${d.year.getUTCFullYear()}<br/>Number of people: ${formatNumber(d.number_of_people)}<br/>Carbon Emission: ${formatNumber(d.carbon_emission)} kg<br/>Carbon Emission/Pax: ${d3.format(".2f")(d.per_person)} kg`)
 		.style("left", `${leftPosition}px`)
 		.style("top", `${topPosition}px`)
 		.style("opacity", 1);
