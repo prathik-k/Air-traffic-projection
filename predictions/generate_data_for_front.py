@@ -56,7 +56,7 @@ def generate_statistics(past_years, city_pairs, data_by_year, coefs_of_dot_codes
     return statistics
 
 
-def generate_all_possible_data(data_by_year, dot_to_iata, iata_to_fuel, coefs_of_dot_codes, number_of_years_to_predict=5, order_AR=4):
+def generate_all_possible_data(data_by_year, coefs_of_dot_codes, number_of_years_to_predict=5, order_AR=4):
 
     past_years = list(data_by_year.keys())
     final_dict = {}
@@ -87,9 +87,10 @@ if __name__ == "__main__":
         data_by_year[str(y)] = select_rows(df)
     dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
     iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
+    coefs_of_dot_codes = compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel)
 
     # Generate file with everything
-    final_dict = generate_all_possible_data(data_by_year, dot_to_iata, iata_to_fuel)
+    final_dict = generate_all_possible_data(data_by_year, coefs_of_dot_codes)
 
     with open('statistics_and_predictions.pickle', 'wb') as handle:
         pickle.dump(final_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
