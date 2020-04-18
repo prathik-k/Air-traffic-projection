@@ -12,11 +12,7 @@ const sliderWidth = 700;
 const sliderMargin = 30;
 const sliderTextWidth = 130;
 const sliderTextMargin = 20;
-const doubleSliderSvg = d3.select("#double_slider")
-      .attr("width", sliderWidth + 2 * sliderMargin + sliderTextWidth + sliderTextMargin)
-      .attr("height", 50);
 
-let doubleSlider     = null;
 let doubleSliderStep = null;
 
 const peopleColor = "#B32300";
@@ -46,24 +42,9 @@ const graphHeight = svgGraphHeight - graphMargin.top - graphMargin.bottom;
 const legendWidth = svgWidth * 0.2;
 const legendHeight = svgHeight;
 
-const peopleGraphSvg = d3.select("#graph_div")
-      .append("svg")
-      .attr("width", svgGraphWidth)
-      .attr("height", svgGraphHeight);
-
-const legendSvg = d3.select("#graph_div")
-      .append("svg")
-      .attr("width", legendWidth)
-      .attr("height", legendHeight);
-
-const emissionGraphSvg = d3.select("#graph_div")
-    .append("svg")
-    .attr("width", svgGraphWidth)
-    .attr("height", svgGraphHeight);
-
-let peopleGraph   = null;
-let legend = null;
-let emissionGraph = null;
+let graphDiv = null;
+let sliderDiv = null;
+let noDataDiv = null;
 
 let peopleDiv = d3.select("body")
     .append("div")
@@ -190,12 +171,22 @@ function getTripStatistics(requestData) {
     });
 }
 
+function removeGraphs() {
+    if (graphDiv) {
+	graphDiv.remove();
+    }
+}
+
 function drawGraphs(data) {
     if (!data) return;
     if (doubleSliderStep.value()[0] == doubleSliderStep.value()[1]) return;
     let filteredData = filterData(data, doubleSliderStep.value()[0], doubleSliderStep.value()[1]);
 
+    removeGraphs();
+    graphDiv = d3.select("body").append("div").attr("class", "graph_div");
+
     drawPeopleGraph(data, filteredData);
+    drawLegend();
     drawEmissionGraph(data, filteredData);
 }
 
@@ -217,11 +208,12 @@ function drawPeopleGraph(data, filteredData) {
 	  .range([graphHeight, 0])
 	  .nice();
 
-    if (peopleGraph) {
-	peopleGraph.remove();
-    }
+    let peopleGraphSvg = graphDiv
+	.append("svg")
+	.attr("width", svgGraphWidth)
+	.attr("height", svgGraphHeight);
 
-    peopleGraph = peopleGraphSvg.append("g")
+    let peopleGraph = peopleGraphSvg.append("g")
 	.attr("transform", `translate(${graphMargin.left}, ${graphMargin.top})`);
 
     let xAxis = peopleGraph.append("g")
@@ -316,11 +308,12 @@ function drawEmissionGraph(data, filteredData) {
 	  .range([graphHeight, 0])
 	  .nice();
 
-    if (emissionGraph) {
-	emissionGraph.remove();
-    }
+    let emissionGraphSvg = graphDiv
+	.append("svg")
+	.attr("width", svgGraphWidth)
+	.attr("height", svgGraphHeight);
 
-    emissionGraph = emissionGraphSvg.append("g")
+    let emissionGraph = emissionGraphSvg.append("g")
 	.attr("transform", `translate(${graphMargin.left}, ${graphMargin.top})`);
 
     let xAxis = emissionGraph.append("g")
@@ -398,9 +391,10 @@ function drawEmissionGraph(data, filteredData) {
 }
 
 function drawLegend() {
-    if (legend) {
-	legend.remove();
-    }
+    let legendSvg = graphDiv
+	.append("svg")
+	.attr("width", legendWidth)
+	.attr("height", legendHeight);
 
     const legendData = [
 	{ title: "Number of people", color: peopleColor },
@@ -417,7 +411,7 @@ function drawLegend() {
     const rectWidth = 25;
     const rectHeight = 15;
 
-    legend = legendSvg.append("g");
+    let legend = legendSvg.append("g");
 
     legendData.forEach((info) => {
 	legend.append("rect")
@@ -436,7 +430,7 @@ function drawLegend() {
     });
 }
 
-function drawOtherTransportTable(data) {
+function cleanTable() {
     if (carTable) {
 	carTable.remove();
     }
@@ -444,6 +438,10 @@ function drawOtherTransportTable(data) {
 	trainTable.remove();
     }
 
+}
+
+function drawOtherTransportTable(data) {
+    cleanTable();
     carTable = otherTransportTable.selectAll("tr.cars")
 	.data(data.cars)
 	.enter()
@@ -487,7 +485,58 @@ function drawOtherTransportTable(data) {
 	});
 }
 
+function removeSlider() {
+    if (sliderDiv) {
+	sliderDiv.remove();
+    }
+}
+
+function drawSlider(statisticsData) {
+    removeSlider();
+
+    sliderDiv = d3.select("body").append("div");
+
+    let doubleSliderSvg = sliderDiv.append("svg")
+	.attr("width", sliderWidth + 2 * sliderMargin + sliderTextWidth + sliderTextMargin)
+	.attr("height", 50)
+	.attr("class", "#double_slider");
+
+    doubleSliderSvg.append("text")
+	.attr("transform", "translate(20, 15)")
+	.text("Year range selection:");
+    let doubleSlider = doubleSliderSvg.append("g")
+	.attr("transform", `translate(${sliderMargin + sliderTextWidth + sliderTextMargin}, 10)`);
+
+    let minYear = d3.min(statisticsData, d => { return d.year.getUTCFullYear(); });
+    let maxYear = d3.max(statisticsData, d => { return d.year.getUTCFullYear(); });
+
+    doubleSliderStep = d3.sliderBottom()
+	.min(minYear)
+	.max(maxYear)
+	.width(sliderWidth)
+	.tickFormat(d3.format("d"))
+	.ticks(maxYear - minYear + 2)
+	.default([minYear, maxYear])
+	.step(1)
+	.fill('#2196f3')
+	.on("onchange", _ => {
+	    drawGraphs(statisticsData);
+	});
+    doubleSlider.call(doubleSliderStep);
+}
+
+function removeNoDataMessage() {
+    if (noDataDiv) {
+	noDataDiv.remove();
+    }
+}
+
 searchButton.onclick = function() {
+    removeGraphs();
+    removeSlider();
+    cleanTable();
+    removeNoDataMessage();
+
     let request = {
 	origin: fromInput.value,
 	destination: toInput.value,
@@ -515,35 +564,16 @@ searchButton.onclick = function() {
 
 	getTripStatistics(requestData)
 	    .then(data => {
-		statisticsData = sortData(cleanData(data.planes));
+		if (data.planes) {
+		    statisticsData = sortData(cleanData(data.planes));
 
-		doubleSliderSvg.selectAll("*").remove();
-		doubleSliderSvg.append("text")
-		    .attr("transform", "translate(20, 15)")
-		    .text("Year range selection:");
-		doubleSlider = doubleSliderSvg.append("g")
-		    .attr("transform", `translate(${sliderMargin + sliderTextWidth + sliderTextMargin}, 10)`);
-
-		let minYear = d3.min(statisticsData, d => { return d.year.getUTCFullYear(); });
-		let maxYear = d3.max(statisticsData, d => { return d.year.getUTCFullYear(); });
-
-		doubleSliderStep = d3.sliderBottom()
-		    .min(minYear)
-		    .max(maxYear)
-		    .width(sliderWidth)
-		    .tickFormat(d3.format("d"))
-		    .ticks(maxYear - minYear + 2)
-		    .default([minYear, maxYear])
-		    .step(1)
-		    .fill('#2196f3')
-		    .on("onchange", _ => {
-			drawGraphs(statisticsData);
-		    });
-		doubleSlider.call(doubleSliderStep);
-
-		drawGraphs(statisticsData);
+		    drawSlider(statisticsData);
+		    drawGraphs(statisticsData);
+		} else {
+		    noDataDiv = d3.select("body").append("div");
+		    noDataDiv.append("p").text("No data available");
+		}
 		drawOtherTransportTable(data);
-		drawLegend();
 	    })
 	    .catch(err => { console.error(err); });
 
