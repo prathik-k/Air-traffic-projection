@@ -63,10 +63,18 @@ def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes
     :param order_AR: integer representing the order of the AR model.
     :return statistics: list of dictionaries containing the statistics.
     """
+
+    # If we have not foudn the airports near the selected locations
+    if len(city_pairs) == 0:
+        return None
+
     statistics = []
     past_years = sorted(data_by_year.keys())
     past_statistics_people = np.zeros((len(past_years)), int)
     past_statistics_CO2 = np.zeros((len(past_years)), int)
+
+    # Check if we find interesting data during our computation
+    valid_data = False
 
     for y_idx in range(len(past_years)):
         statistics.append({
@@ -84,6 +92,9 @@ def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes
                                                       coefs_of_dot_codes)
                 past_statistics_CO2[y_idx] += CO2_emissions
                 statistics[y_idx]["carbon_emission"] += int(CO2_emissions)
+        if statistics[y_idx]["carbon_emission"] != 0 and statistics[y_idx]["number_of_people"] != 0:
+            valid_data = True
+
     next_statistics_people = full_prediction_AR(past_statistics_people, order_AR, number_of_years_to_predict)
     next_statistics_CO2 = full_prediction_AR(past_statistics_CO2, order_AR, number_of_years_to_predict)
     for y_idx in range(number_of_years_to_predict):
@@ -92,6 +103,10 @@ def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes
             "number_of_people": int(next_statistics_people[y_idx]),
             "carbon_emission": int(next_statistics_CO2[y_idx]),
             "prediction": True})
+
+    if not valid_data:
+        return None
+
     return statistics
 
 

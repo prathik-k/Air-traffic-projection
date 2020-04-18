@@ -25,7 +25,6 @@ def statistics_handler():
     destination_geolocation = (data["destination"]["geolocation"]["lat"], data["destination"]["geolocation"]["lng"])
 
     city_pairs = get_ap_codes(app.all_airports, origin_geolocation, destination_geolocation)
-
     result = generate_statistics_for_request(city_pairs, app.data_by_year, app.coefs_of_dot_codes)
 
     car_emissions, train_emissions = other_transport(data["distance"])
