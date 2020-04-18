@@ -11,7 +11,7 @@ else:
 
 
 def init_app(app):
-    years = [2015, 2016, 2017, 2018, 2019]
+    years = list(range(2015, 2020))#[2015, 2016, 2017, 2018, 2019]
     data_by_year = {}
     for y in years:
         df = pd.read_csv('Air traffic data/Yearly traffic/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(

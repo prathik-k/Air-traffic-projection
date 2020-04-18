@@ -99,7 +99,9 @@ def plot_aircraft_codes_histogram(data_by_year):
 def other_transport(dist):
     car_fuel_emissions = {'Two-seater': 22, 'Subcompact': 24, 'Compact': 26, 'Midsize Sedan': 26, 'Large Sedan': 21,
                        'Hatchback': 27, 'Pickup truck': 18, 'Minivan': 20, 'Small SUV': 24, 'Standard SUV': 18}
-    car_fuel_emissions.update({i: 9.07185*(dist/car_fuel_emissions[i]) for i in car_fuel_emissions.keys()})    
+    car_fuel_emissions.update({i: 9.07185*(dist/car_fuel_emissions[i]) for i in car_fuel_emissions.keys()})
 
-    train_avg = {'train': 10.1514*(dist/71.6)}
+    car_fuel_emissions = [{"type": key, "emissions": value} for key, value in car_fuel_emissions.items()]
+
+    train_avg = [{"type": "Train", "emissions": 10.1514*(dist/71.6)}]
     return (car_fuel_emissions, train_avg)
