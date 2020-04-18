@@ -25,7 +25,8 @@ def compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel, deg
     x_miles = compute_distances_vector_in_miles(iata_to_fuel)
     years_str = list(data_by_year.keys())
     dot_codes_used = []
-    for yr_str in years_str:
+    years = ['2015', '2016', '2017', '2018', '2019']
+    for yr_str in years:
         dot_codes_used += list(data_by_year[yr_str]['AIRCRAFT_TYPE'])
 
     dot_codes = np.unique(dot_codes_used)
