@@ -64,7 +64,7 @@ def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes
     :return statistics: list of dictionaries containing the statistics.
     """
     statistics = []
-    past_years = list(data_by_year.keys())
+    past_years = sorted(data_by_year.keys())
     past_statistics_people = np.zeros((len(past_years)), int)
     past_statistics_CO2 = np.zeros((len(past_years)), int)
 
