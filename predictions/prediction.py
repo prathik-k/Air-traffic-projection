@@ -11,7 +11,8 @@ else:
 
 
 def init_app(app):
-    years = [2015, 2016, 2017, 2018, 2019]
+    # years = [2015, 2016, 2017, 2018, 2019]
+    years = [k for k in range(2010, 2020)]
     data_by_year = {}
     for y in years:
         df = pd.read_csv('Air traffic data/Yearly traffic/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
@@ -52,7 +53,7 @@ def count_people_air_travelling(data_by_year, origin, dest, year):
 
 
 def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes, number_of_years_to_predict=6,
-                                    order_AR=4):
+                                    order_AR=3):
     """
     This function returns a list containing statistics.
     :param city_pairs: list of tuples containing two strings each representing airport codes (origin, destination)
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Clean data
-    years = [2015, 2016, 2017, 2018, 2019]
+    years = [k for k in range(2015, 2020)]
     data_by_year = {}
     for y in years:
         df = pd.read_csv('Air traffic data/Yearly traffic/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(

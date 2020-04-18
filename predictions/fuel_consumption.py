@@ -23,7 +23,6 @@ def compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel, deg
     coefs_of_dot_codes = {}
 
     x_miles = compute_distances_vector_in_miles(iata_to_fuel)
-    years_str = list(data_by_year.keys())
     dot_codes_used = []
     years = ['2015', '2016', '2017', '2018', '2019']
     for yr_str in years:
@@ -61,12 +60,12 @@ def compute_CO2_emissions(origin, dest, year, data_by_year, coefs_of_dot_codes):
         (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['PASSENGERS'])
     fuel_total_consumption_kg = 0
     for k in range(len(dot_codes)):
-        if coefs_of_dot_codes[dot_codes[k]]["coefs"] is None:
-            coefs = coefs_of_dot_codes[0]["coefs"]
-            estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
-        elif dot_codes[k] not in coefs_of_dot_codes:
+        if dot_codes[k] not in coefs_of_dot_codes:
             coefs = coefs_of_dot_codes[0]["coefs"]
             estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[0]["seats"])))
+        elif coefs_of_dot_codes[dot_codes[k]]["coefs"] is None:
+            coefs = coefs_of_dot_codes[0]["coefs"]
+            estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
         else:
             coefs = coefs_of_dot_codes[dot_codes[k]]["coefs"]
             estimated_number_of_flights = int(round((passengers_nb[k]) / (coefs_of_dot_codes[dot_codes[k]]["seats"])))
