@@ -4,6 +4,7 @@ var directionsRenderer;
 var placesService;
 
 const URL = "http://127.0.0.1:5000/statistics";
+const METERS_TO_MILES = 0.000621371;
 
 let statisticsData = null;
 
@@ -42,6 +43,11 @@ let emissionDiv = d3.select("body")
     .append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
+
+let carTable = null;
+let trainTable = null;
+
+const otherTransportTable = d3.select("#other_transport_table");
 
 function cleanData(data) {
     return newData = data.map(d => {
@@ -129,10 +135,11 @@ function getCityAndGeolocation(details) {
     };
 }
 
-function makeRequestData(originDetails, destinationDetails) {
+function makeRequestData(directions, originDetails, destinationDetails) {
     return {
 	origin: getCityAndGeolocation(originDetails),
 	destination: getCityAndGeolocation(destinationDetails),
+	distance: directions.routes[0].legs[0].distance.value * METERS_TO_MILES,
     };
 }
 
@@ -142,7 +149,6 @@ function getTripStatistics(requestData) {
 	mode: "cors",
 	headers: {
 	    "Content-Type": "application/json",
-	    //"Access-Control-Allow-Origin": "0.0.0.0:5000",
 	},
 	body: JSON.stringify(requestData),
     }).then(response => {
@@ -348,6 +354,32 @@ function drawEmissionGraph(data, filteredData) {
 	.text("Carbon Emission (kg)");
 }
 
+function drawOtherTransportTable(data) {
+    if (carTable) {
+	carTable.remove();
+    }
+    if (trainTable) {
+	trainTable.remove();
+    }
+
+    carTable = otherTransportTable.selectAll("tr.cars")
+	.data(data.cars)
+	.enter()
+	.append("tr")
+	.attr("class", "cars");
+
+    carTable.append("td").text(d => { return d.type; });
+    carTable.append("td").text(d => { return d3.format(".2f")(d.emissions); });
+
+    trainTable = otherTransportTable.selectAll("tr.train")
+	.data(data.train)
+	.enter()
+	.append("tr");
+
+    trainTable.append("td").text(d => { return d.type; });
+    trainTable.append("td").text(d => { return d3.format(".2f")(d.emissions); });
+}
+
 searchButton.onclick = function() {
     let request = {
 	origin: fromInput.value,
@@ -372,11 +404,11 @@ searchButton.onclick = function() {
 	    getPlaceDetailsPromise(destinationPlaceRequest)
 	]);
     }).then(([directions, originDetails, destinationDetails]) => {
-	let requestData = makeRequestData(originDetails, destinationDetails);
+	let requestData = makeRequestData(directions, originDetails, destinationDetails);
 
 	getTripStatistics(requestData)
 	    .then(data => {
-		statisticsData = sortData(cleanData(data));
+		statisticsData = sortData(cleanData(data.planes));
 		if (doubleSlider) {
 		    doubleSlider.remove();
 		}
@@ -401,6 +433,7 @@ searchButton.onclick = function() {
 		doubleSlider.call(doubleSliderStep);
 
 		drawGraphs(statisticsData);
+		drawOtherTransportTable(data);
 	    })
 	    .catch(err => { console.error(err); });
 

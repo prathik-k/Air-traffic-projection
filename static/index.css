@@ -19,9 +19,13 @@
 }
 
 table, th, td {
-    border: 2px solid #444444;
+    border: 1px solid #444444;
     border-collapse: collapse;
-    padding: 5px;
+    padding: 8px;
+}
+
+.first_row{
+    border-width: 2px 1px 1px 1px;
 }
 
 /* Optional: Makes the sample page fill the window. */
