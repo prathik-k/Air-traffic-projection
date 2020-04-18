@@ -19,9 +19,13 @@
 }
 
 table, th, td {
-    border: 2px solid #444444;
+    border: 1px solid #444444;
     border-collapse: collapse;
-    padding: 5px;
+    padding: 8px;
+}
+
+.first_row{
+    border-width: 2px 1px 1px 1px;
 }
 
 /* Optional: Makes the sample page fill the window. */
@@ -42,49 +46,59 @@ html, body {
     stroke-dasharray: 6,2,4,2;
 }
 
+temp {
+    fill: #ff0000;
+    fill: #ff7d7d;
+    fill: #0000ff;
+    fill: #7d7dff;
+    fill: #0000ff;
+    fill: #2100FA;
+    fill: #8E7DFA;
+    fill: #FAE55A;
+    fill: #FAD900;
+}
+
 .people {
-    stroke: #ff0000;
+    stroke: #B32300;
 }
 
 .people_dots {
-    fill: #ff0000;
+    fill: #B32300;
     stroke-width: 2px;
     stroke: white;
 }
 
 .people_dots_prediction {
-    fill: #ff7d7d;
+    fill: #B37C6F;
     stroke-width: 2px;
     stroke: white;
 }
 
 .people_prediction_zone {
-    fill: #ff0000;
+    fill: #B32300;
     fill-opacity: 0.1;
 }
 
 .emission {
-    stroke: #0000ff;
+    stroke: #2100FA;
 }
 
 .emission_dots {
-    fill: #0000ff;
+    fill: #2100FA;
     stroke-width: 2px;
     stroke: white;
 }
 
 .emission_dots_prediction {
-    fill: #7d7dff;
+    fill: #8E7DFA;
     stroke-width: 2px;
     stroke: white;
 }
 
 .emission_prediction_zone {
-    fill: #0000ff;
+    fill: #2100FA;
     fill-opacity: 0.1;
 }
-
-
 
 div.tooltip {
     position: absolute;
@@ -98,4 +112,8 @@ div.tooltip {
     border-color: #CCCCCC;
     border-radius: 8px;
     pointer-events: none;
+}
+
+.graph_title {
+    font-weight: bold;
 }

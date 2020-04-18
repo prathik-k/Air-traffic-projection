@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Carbon Emission Calculator</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
@@ -15,33 +15,18 @@
       <button id="search_button">Search</button>
     </div>
     <div id="map"></div>
+    <div id="table_div">
+      <table id="other_transport_table">
+	<tr>
+	  <th>Mean of transportation</th>
+	  <th>Carbon emission/Pax(kg)</th>
+	</tr>
+      </table>
+    </div>
     <div>
       <svg id="double_slider"></svg>
     </div>
     <div id="graph_div"></div>
-    <!--
-    <div id="map_and_stats">
-      <div id="trip_info">
-	<table id="statistics_table">
-	  <tr id="year_row">
-	    <th class="label">Year</td>
-	  </tr>
-	  <tr id="number_of_people_row">
-	    <td class="label">Number of people</td>
-	  </tr>
-	  <tr id="carbon_emission_row">
-	    <td class="label">Carbon emission</td>
-	  </tr>
-	</table>
-	<svg id="slider"></svg>
-	<div>
-	  <span>Distance:</span>
-	  <span id="trip_summary"></span></div>
-	</div>
-	<svg id="graph_svg"></svg>
-      </div>
-    </div>
-    -->
     <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
     <script src="{{ url_for('static', filename='d3-simple-slider.min.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>

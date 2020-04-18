@@ -13,6 +13,7 @@ else:
 def init_app(app):
     # years = [2015, 2016, 2017, 2018, 2019]
     years = [k for k in range(2010, 2020)]
+
     data_by_year = {}
     for y in years:
         df = pd.read_csv('Air traffic data/Yearly traffic/' + str(y) + '_data.csv', index_col=False, encoding='UTF-8').drop(
