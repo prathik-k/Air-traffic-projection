@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 
+#This is a clean-up script (pre-processing routine) used to create a list of medium and large airports in mainland US, along with their coordinates. 
 
 with open('airports.json',encoding='utf8') as f:
 	all_airports = json.load(f)

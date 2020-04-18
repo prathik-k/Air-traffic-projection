@@ -57,7 +57,6 @@ def generate_statistics(past_years, city_pairs, data_by_year, coefs_of_dot_codes
 
 
 def generate_all_possible_data(data_by_year, coefs_of_dot_codes, number_of_years_to_predict=5, order_AR=4):
-
     past_years = list(data_by_year.keys())
     final_dict = {}
     possible_origins = []

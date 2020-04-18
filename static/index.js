@@ -95,11 +95,12 @@ function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+//Initialize Google map centered on NYC
 function initMap() {
     directionsServices = new google.maps.DirectionsService();
 
     map = new google.maps.Map(document.getElementById('map'), {
-	center: {lat: -34.397, lng: 150.644},
+	center: {lat: 40.712, lng: -74.006},
 	zoom: 8
     });
 
@@ -155,6 +156,7 @@ function makeRequestData(directions, originDetails, destinationDetails) {
     };
 }
 
+//Obtain trip information/computations from the backend
 function getTripStatistics(requestData) {
     return fetch(URL, {
 	method: "POST",
@@ -177,6 +179,7 @@ function removeGraphs() {
     }
 }
 
+//Container function to generate the graphs based on the slider range
 function drawGraphs(data) {
     if (!data) return;
     if (doubleSliderStep.value()[0] == doubleSliderStep.value()[1]) return;
@@ -190,6 +193,7 @@ function drawGraphs(data) {
     drawEmissionGraph(data, filteredData);
 }
 
+//Plotting the number of people traveling over the range of years
 function drawPeopleGraph(data, filteredData) {
     const firstPrediction = getFirstPredictionData(data);
     const xScale = d3.scaleTime()
@@ -290,6 +294,7 @@ function drawPeopleGraph(data, filteredData) {
 	.text("Evolution of carbon emissions over the year");
 }
 
+//Plotting the emissions over the range of years
 function drawEmissionGraph(data, filteredData) {
     const firstPrediction = getFirstPredictionData(data);
     const xScale = d3.scaleTime()
@@ -390,6 +395,7 @@ function drawEmissionGraph(data, filteredData) {
 	.text("Evolution of passenger transported over the year");
 }
 
+//Creating the legend for the plots
 function drawLegend() {
     let legendSvg = graphDiv
 	.append("svg")
@@ -430,6 +436,7 @@ function drawLegend() {
     });
 }
 
+//Function to remove table of other modes of transport when query is changed
 function cleanTable() {
     if (carTable) {
 	carTable.remove();
@@ -440,6 +447,7 @@ function cleanTable() {
 
 }
 
+//Function to draw table of emissions of other modes of transport
 function drawOtherTransportTable(data) {
     cleanTable();
     carTable = otherTransportTable.selectAll("tr.cars")
@@ -485,12 +493,14 @@ function drawOtherTransportTable(data) {
 	});
 }
 
+//Function to remove slider on query change
 function removeSlider() {
     if (sliderDiv) {
 	sliderDiv.remove();
     }
 }
 
+//Function to instantiate slider for year range selection
 function drawSlider(statisticsData) {
     removeSlider();
 
@@ -525,12 +535,14 @@ function drawSlider(statisticsData) {
     doubleSlider.call(doubleSliderStep);
 }
 
+//Function to remove message called on query when there is no direct flight between two cities for air travel statistics.
 function removeNoDataMessage() {
     if (noDataDiv) {
 	noDataDiv.remove();
     }
 }
 
+//Intiate routine after Search button is clicked and query is made
 searchButton.onclick = function() {
     removeGraphs();
     removeSlider();

@@ -131,7 +131,7 @@ if __name__ == "__main__":
     dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
     iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
 
-    # Get the number of people that travelled by flight between NY and Boston for each year between year 2015 and year 2019
+    # Get the number of people that travelled by flight between two cities for each year between year 2010 and year 2019
     past_years = list(data_by_year.keys())
     past_statistics = np.zeros((len(past_years)), int)
     for y_idx in range(len(past_years)):
@@ -143,7 +143,7 @@ if __name__ == "__main__":
                                                                                         int(past_years[-1]),
                                                                                         past_statistics))
 
-    # Auto-regressive model to predict the number of people that will travel by flight between NY and Boston for each year between year 2020 and year 2025
+    # Auto-regressive model to predict the number of people that will travel by flight between two cities for each year between year 2020 and year 2025
     next_statistics = full_prediction_AR(past_statistics, args.order_AR, args.number_of_years_to_predict)
 
     print(

@@ -1,18 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+#This function converts distance from nautical miles to miles.
 def compute_distances_vector_in_miles(iata_to_fuel):
     x_nautical_miles = np.array(iata_to_fuel.keys()[1:]).astype(float)
     x_miles = x_nautical_miles * 1.15078  # 1 nautical mile = 1.15078 mile
     return x_miles
 
-
+#This function computes the coefficients for the polynomial regression model.
 def compute_polynomial_coefficients(x, y, degree):
     coefficients = np.polyfit(x, y, degree)
     return coefficients
 
-
+#This function computes flight distance between a city pair.
 def get_flight_distance(origin, dest, year, data_by_year):
     distance_in_miles = np.array(data_by_year[str(year)].iloc[np.where(
         (data_by_year[str(year)]['ORIGIN'] == origin) & (data_by_year[str(year)]['DEST'] == dest))]['DISTANCE'])[0]
@@ -51,6 +51,7 @@ def compute_definitive_coefficients(data_by_year, dot_to_iata, iata_to_fuel, deg
     return coefs_of_dot_codes
 
 
+#This function computes the CO2 emission by calculating the fuel consumption, and using a standard conversion from kg of fuel to kg of CO2 produced.
 def compute_CO2_emissions(origin, dest, year, data_by_year, coefs_of_dot_codes):
     flight_distance = get_flight_distance(origin, dest, year, data_by_year)
 
@@ -75,7 +76,7 @@ def compute_CO2_emissions(origin, dest, year, data_by_year, coefs_of_dot_codes):
 
     return CO2_kg
 
-
+#This is an accessory function to obtain the most commonly used aircraft for flights, and plot a histogram of aircraft types used for all flights.
 def plot_aircraft_codes_histogram(data_by_year):
     years_str = list(data_by_year.keys())
     dot_codes_used = []
