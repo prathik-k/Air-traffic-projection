@@ -8,30 +8,61 @@ const METERS_TO_MILES = 0.000621371;
 
 let statisticsData = null;
 
+const sliderWidth = 700;
+const sliderMargin = 30;
+const sliderTextWidth = 130;
+const sliderTextMargin = 20;
 const doubleSliderSvg = d3.select("#double_slider")
-      .attr("width", 500)
+      .attr("width", sliderWidth + 2 * sliderMargin + sliderTextWidth + sliderTextMargin)
       .attr("height", 50);
 
 let doubleSlider     = null;
 let doubleSliderStep = null;
 
-const svgWidth  = (window.innerWidth - 20) / 2;
+const peopleColor = "#B32300";
+const emissionColor = "#2100FA";
+const peoplePredictionColor = "#B37C6F";
+const emissionPredictionColor = "#8E7DFA";
+
+const svgWidth = window.innerWidth - 20;
 const svgHeight = 400;
 
-const graphWidth  = 0.7 * svgWidth;
-const graphHeight = 0.7 * svgHeight;
+const svgGraphWidth  = svgWidth * 0.4;
+const svgGraphHeight = svgHeight;
+
+const graphLeftAxisWidth = 70;
+const graphBottomAxisHeight = 40;
+
+const graphMargin = {
+    top: 40,
+    bottom: graphBottomAxisHeight + 20,
+    left: graphLeftAxisWidth + 20,
+    right: 20,
+};
+
+const graphWidth  = svgGraphWidth - graphMargin.left - graphMargin.right;
+const graphHeight = svgGraphHeight - graphMargin.top - graphMargin.bottom;
+
+const legendWidth = svgWidth * 0.2;
+const legendHeight = svgHeight;
 
 const peopleGraphSvg = d3.select("#graph_div")
       .append("svg")
-      .attr("width", svgWidth)
-      .attr("height", svgHeight);
+      .attr("width", svgGraphWidth)
+      .attr("height", svgGraphHeight);
+
+const legendSvg = d3.select("#graph_div")
+      .append("svg")
+      .attr("width", legendWidth)
+      .attr("height", legendHeight);
 
 const emissionGraphSvg = d3.select("#graph_div")
     .append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight);
+    .attr("width", svgGraphWidth)
+    .attr("height", svgGraphHeight);
 
 let peopleGraph   = null;
+let legend = null;
 let emissionGraph = null;
 
 let peopleDiv = d3.select("body")
@@ -191,7 +222,7 @@ function drawPeopleGraph(data, filteredData) {
     }
 
     peopleGraph = peopleGraphSvg.append("g")
-	.attr("transform", `translate(${(svgWidth - graphWidth) / 2}, ${(svgHeight - graphHeight) / 2})`);
+	.attr("transform", `translate(${graphMargin.left}, ${graphMargin.top})`);
 
     let xAxis = peopleGraph.append("g")
 	.attr("transform", `translate(0, ${graphHeight})`)
@@ -249,16 +280,22 @@ function drawPeopleGraph(data, filteredData) {
 	});
 
     let xAxisLabel = peopleGraph.append("text")
-	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + 40})`)
+	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + graphBottomAxisHeight})`)
 	.style("text-anchor", "middle")
 	.text("Year");
 
     let yAxisLabel = peopleGraph.append("text")
 	.attr("transform", "rotate(-90)")
-	.attr("y", -70)
+	.attr("y", -graphLeftAxisWidth)
 	.attr("x", -graphHeight / 2)
 	.style("text-anchor", "middle")
 	.text("Number of people");
+
+    let graphTitle = peopleGraph.append("text")
+	.attr("transform", `translate(${graphWidth / 2}, -10)`)
+	.style("text-anchor", "middle")
+	.attr("class", "graph_title")
+	.text("Evolution of carbon emissions over the year");
 }
 
 function drawEmissionGraph(data, filteredData) {
@@ -284,7 +321,7 @@ function drawEmissionGraph(data, filteredData) {
     }
 
     emissionGraph = emissionGraphSvg.append("g")
-	.attr("transform", `translate(${(svgWidth - graphWidth) / 2}, ${(svgHeight - graphHeight) / 2})`);
+	.attr("transform", `translate(${graphMargin.left}, ${graphMargin.top})`);
 
     let xAxis = emissionGraph.append("g")
 	.attr("transform", `translate(0, ${graphHeight})`)
@@ -342,16 +379,61 @@ function drawEmissionGraph(data, filteredData) {
 	});
 
     let xAxisLabel = emissionGraph.append("text")
-	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + 40})`)
+	.attr("transform", `translate(${graphWidth / 2}, ${graphHeight + graphBottomAxisHeight})`)
 	.style("text-anchor", "middle")
 	.text("Year");
 
     let yAxisLabel = emissionGraph.append("text")
 	.attr("transform", "rotate(-90)")
-	.attr("y", -70)
+	.attr("y", -graphLeftAxisWidth)
 	.attr("x", -graphHeight / 2)
 	.style("text-anchor", "middle")
 	.text("Carbon Emission (kg)");
+
+    let graphTitle = emissionGraph.append("text")
+	.attr("transform", `translate(${graphWidth / 2}, -10)`)
+	.style("text-anchor", "middle")
+	.attr("class", "graph_title")
+	.text("Evolution of passenger transported over the year");
+}
+
+function drawLegend() {
+    if (legend) {
+	legend.remove();
+    }
+
+    const legendData = [
+	{ title: "Number of people", color: peopleColor },
+	{ title: "Prediction of the number of people", color: peoplePredictionColor },
+	{ title: "Carbon emissions", color: emissionColor },
+	{ title: "Prediction for the carbon emissions", color: emissionPredictionColor },
+    ];
+
+    const rightMargin = 10;
+
+    const offset = 30;
+    let currentOffset = 20;
+
+    const rectWidth = 25;
+    const rectHeight = 15;
+
+    legend = legendSvg.append("g");
+
+    legendData.forEach((info) => {
+	legend.append("rect")
+	    .attr("x", rightMargin)
+	    .attr("y", currentOffset)
+	    .attr("width", rectWidth)
+	    .attr("height", rectHeight)
+	    .style("fill", info.color);
+
+	legend.append("text")
+	    .attr("x", rightMargin * 2 + rectWidth)
+	    .attr("y", currentOffset + rectHeight)
+	    .text(info.title);
+
+	currentOffset += offset;
+    });
 }
 
 function drawOtherTransportTable(data) {
@@ -368,16 +450,41 @@ function drawOtherTransportTable(data) {
 	.append("tr")
 	.attr("class", "cars");
 
-    carTable.append("td").text(d => { return d.type; });
-    carTable.append("td").text(d => { return d3.format(".2f")(d.emissions); });
+    carTable.append("td").text(d => { return d.type; })
+	.style("border-width", function(d, i) {
+	    if (i == 0) {
+		return "2px 1px 1px 1px";
+	    }
+	    return "1px";
+	});
+    carTable.append("td").text(d => { return d3.format(".2f")(d.emissions); })
+	.style("border-width", function(d, i) {
+	    if (i == 0) {
+		return "2px 1px 1px 1px";
+	    }
+	    return "1px";
+	});
 
     trainTable = otherTransportTable.selectAll("tr.train")
 	.data(data.train)
 	.enter()
-	.append("tr");
+	.append("tr")
+	.attr("class", "train");
 
-    trainTable.append("td").text(d => { return d.type; });
-    trainTable.append("td").text(d => { return d3.format(".2f")(d.emissions); });
+    trainTable.append("td").text(d => { return d.type; })
+	.style("border-width", function(d, i) {
+	    if (i == 0) {
+		return "2px 1px 1px 1px";
+	    }
+	    return "1px";
+	});
+    trainTable.append("td").text(d => { return d3.format(".2f")(d.emissions); })
+	.style("border-width", function(d, i) {
+	    if (i == 0) {
+		return "2px 1px 1px 1px";
+	    }
+	    return "1px";
+	});
 }
 
 searchButton.onclick = function() {
@@ -409,11 +516,13 @@ searchButton.onclick = function() {
 	getTripStatistics(requestData)
 	    .then(data => {
 		statisticsData = sortData(cleanData(data.planes));
-		if (doubleSlider) {
-		    doubleSlider.remove();
-		}
+
+		doubleSliderSvg.selectAll("*").remove();
+		doubleSliderSvg.append("text")
+		    .attr("transform", "translate(20, 15)")
+		    .text("Year range selection:");
 		doubleSlider = doubleSliderSvg.append("g")
-		    .attr("transform", "translate(50, 10)");
+		    .attr("transform", `translate(${sliderMargin + sliderTextWidth + sliderTextMargin}, 10)`);
 
 		let minYear = d3.min(statisticsData, d => { return d.year.getUTCFullYear(); });
 		let maxYear = d3.max(statisticsData, d => { return d.year.getUTCFullYear(); });
@@ -421,7 +530,7 @@ searchButton.onclick = function() {
 		doubleSliderStep = d3.sliderBottom()
 		    .min(minYear)
 		    .max(maxYear)
-		    .width(400)
+		    .width(sliderWidth)
 		    .tickFormat(d3.format("d"))
 		    .ticks(maxYear - minYear + 2)
 		    .default([minYear, maxYear])
@@ -434,6 +543,7 @@ searchButton.onclick = function() {
 
 		drawGraphs(statisticsData);
 		drawOtherTransportTable(data);
+		drawLegend();
 	    })
 	    .catch(err => { console.error(err); });
 
