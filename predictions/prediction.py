@@ -82,6 +82,7 @@ def generate_statistics_for_request(city_pairs, data_by_year, coefs_of_dot_codes
     :param city_pairs: list of tuples containing two strings each representing airport codes (origin, destination).
     This list contains more than one tuple when there are several airports near the origin or the destination.
     :param data_by_year: dictionary containing yearly air trafic data produced by the select_row function.
+    :param coefs_of_dot_codes: Dictionary containing the polynomial fuel consumption model of different aircrafts.
     :param number_of_years_to_predict: integer representing the number of future years for which we wich to predict statistics.
     :param order_AR: integer representing the order of the AR model.
     :return statistics: list of dictionaries containing statistics about the number of people air traveling and the
