@@ -23,7 +23,32 @@
 	</tr>
       </table>
     </div>
-    <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+	<!-- Text for the instructions:
+
+	This tool provides:
+	1. An estimate of air traffic (direct flights) between two cities.
+	2. A prediction of future air traffic between the cities, until 2025.
+	3. The estimated total carbon dioxide emissions by flights along the route, and a per person estimate.
+	4. The carbon dioxide emission estimates for other modes of transport, as a table.
+
+	Simply enter the origin and destination cities (and state if necessary).
+
+	<div class='container'>
+		<h2>Estimating the Environmental Impact of Travel</h2>
+			<p>This tool provides:
+				<ol type="1">
+					<li>An estimate of air traffic (direct flights) between two cities.</li>
+					<li>A prediction of future air traffic between the cities, until 2025.</li>
+					<li>The estimated total carbon dioxide emissions by flights along the route, and a per person estimate.</li>
+					<li>The carbon dioxide emission estimates for other modes of transport, as a table.</li>
+				</ol>
+				Simply enter the origin and destination cities (and state if necessary).
+			</p>
+
+	</div>
+	 -->
+
+    <script src="{{ url_for('static', filename='/d3.min.js') }}"></script>
     <script src="{{ url_for('static', filename='d3-simple-slider.min.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&libraries=places&callback=initMap"
