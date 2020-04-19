@@ -28,7 +28,7 @@ def init_app(app):
     app.data_by_year = data_by_year  # Data corresponding to yearly air trafic
     # Data mapping airport names to airport three-letter codes
     app.all_airports = pd.read_csv("Air traffic data/us_airports.csv")
-    # Data mapping aicraft DOT codes to aircraft IATA codes and to get the number of seats of each aircraft
+    # Data mapping aicraft DOT codes to aircraft IATA codes. Also provides the number of seats of each aircraft.
     app.dot_to_iata = pd.read_csv('Air traffic data/aircraft_code_final.csv', index_col=False, encoding='UTF-8')
     # Data mapping fuel consumption to aircraft IATA codes
     app.iata_to_fuel = pd.read_csv('Air traffic data/fuel_consumption.csv', index_col=False, encoding='UTF-8')
