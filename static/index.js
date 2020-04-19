@@ -583,7 +583,7 @@ searchButton.onclick = function() {
 		    drawGraphs(statisticsData);
 		} else {
 		    noDataDiv = d3.select("body").append("div");
-		    noDataDiv.append("p").text("No direct flights between the cities specified.");
+		    noDataDiv.append("p").attr("id", "no_data").text("No direct flights between the cities specified.");
 		}
 		drawOtherTransportTable(data);
 	    })

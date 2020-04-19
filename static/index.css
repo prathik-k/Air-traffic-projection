@@ -46,18 +46,6 @@ html, body {
     stroke-dasharray: 6,2,4,2;
 }
 
-temp {
-    fill: #ff0000;
-    fill: #ff7d7d;
-    fill: #0000ff;
-    fill: #7d7dff;
-    fill: #0000ff;
-    fill: #2100FA;
-    fill: #8E7DFA;
-    fill: #FAE55A;
-    fill: #FAD900;
-}
-
 .people {
     stroke: #B32300;
 }
@@ -116,4 +104,8 @@ div.tooltip {
 
 .graph_title {
     font-weight: bold;
+}
+
+#no_data {
+    margin-left: 10px;
 }
