@@ -29,6 +29,8 @@ const svgGraphHeight = svgHeight;
 const graphLeftAxisWidth = 70;
 const graphBottomAxisHeight = 40;
 
+let firstTime = true;
+
 const graphMargin = {
     top: 40,
     bottom: graphBottomAxisHeight + 20,
@@ -411,11 +413,12 @@ function drawLegend() {
 
     const rightMargin = 10;
 
-    const offset = 30;
+    const offset = 25;
     let currentOffset = 20;
 
     const rectWidth = 25;
     const rectHeight = 15;
+    const textOffset = 3;
 
     let legend = legendSvg.append("g");
 
@@ -429,7 +432,7 @@ function drawLegend() {
 
 	legend.append("text")
 	    .attr("x", rightMargin * 2 + rectWidth)
-	    .attr("y", currentOffset + rectHeight)
+	    .attr("y", currentOffset + rectHeight - textOffset)
 	    .text(info.title);
 
 	currentOffset += offset;
@@ -542,8 +545,17 @@ function removeNoDataMessage() {
     }
 }
 
-//Intiate routine after Search button is clicked and query is made
+function updateInstructions() {
+    if (firstTime) {
+	d3.select("#instructions div").remove();
+	d3.select("#instructions h2").text("Flights statistics");
+	firstTime = false;
+    }
+}
+
+//Initiate routine after Search button is clicked and query is made
 searchButton.onclick = function() {
+    updateInstructions();
     removeGraphs();
     removeSlider();
     cleanTable();
