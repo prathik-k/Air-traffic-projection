@@ -293,7 +293,7 @@ function drawPeopleGraph(data, filteredData) {
 	.attr("transform", `translate(${graphWidth / 2}, -10)`)
 	.style("text-anchor", "middle")
 	.attr("class", "graph_title")
-	.text("Evolution of carbon emissions over the year");
+	.text("Evolution of passenger transported over the year");
 }
 
 //Plotting the emissions over the range of years
@@ -394,7 +394,7 @@ function drawEmissionGraph(data, filteredData) {
 	.attr("transform", `translate(${graphWidth / 2}, -10)`)
 	.style("text-anchor", "middle")
 	.attr("class", "graph_title")
-	.text("Evolution of passenger transported over the year");
+	.text("Evolution of carbon emissions over the year");
 }
 
 //Creating the legend for the plots
