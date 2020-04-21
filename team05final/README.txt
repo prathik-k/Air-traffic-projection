@@ -61,6 +61,6 @@ Then you will need two things:
 EXECUTION
 =========
 
-Now you can start the server by running the following command: "export FLASK_APP=server.py flask run" in aterminal. If everything went find you should be able to access the platform at your local address: "http://127.0.0.1:5000/".
+Now you can start the server by running the following command: "export FLASK_APP=server.py flask run" in a terminal. If everything went fine you should be able to access the platform at your local address: "http://127.0.0.1:5000/".
 
 Again, to aid the grading of the project, we have temporarily hosted the project on the website prediction.godeau.xyz
